@@ -2,7 +2,7 @@
   "protocol": "resident-agent-bridge/v1",
   "enabled": false,
   "repository": "jain-Igtm/ChatGPT",
-  "branch": "agent-bridge-bootstrap",
+  "branch": "main",
   "inbox_path": "agent-bridge/inbox",
   "outbox_path": "agent-bridge/outbox",
   "ack_path": "agent-bridge/acks",
