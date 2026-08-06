@@ -7,7 +7,7 @@ The bridge is dormant by default. ChatGPT only places a message in `inbox/` afte
 ## Flow
 
 1. ChatGPT creates one immutable JSON message in `inbox/`.
-2. The Android agent polls the `agent-bridge-bootstrap` branch, verifies the message schema, and processes messages it has not seen before.
+2. The Android agent polls the `main` branch, verifies the message schema, and processes messages it has not seen before.
 3. The agent writes one JSON response to `outbox/` using the same `conversation_id` and a `reply_to` value matching the inbound message ID.
 4. ChatGPT reads the response through the connected GitHub app and relays or continues the conversation only when the user requests it.
 
