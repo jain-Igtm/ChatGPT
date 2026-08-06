@@ -1,0 +1,18 @@
+{
+  "protocol": "resident-agent-bridge/v1",
+  "enabled": false,
+  "repository": "jain-Igtm/ChatGPT",
+  "branch": "agent-bridge-bootstrap",
+  "inbox_path": "agent-bridge/inbox",
+  "outbox_path": "agent-bridge/outbox",
+  "ack_path": "agent-bridge/acks",
+  "poll_interval_seconds": 60,
+  "require_user_initiation": true,
+  "accept_pull_request_messages": false,
+  "plaintext_messages_are_public": true,
+  "max_message_bytes": 262144,
+  "attachments": {
+    "mode": "repository_paths_or_https_urls",
+    "max_count": 8
+  }
+}
