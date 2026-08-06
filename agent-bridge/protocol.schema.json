@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jain-Igtm/ChatGPT/agent-bridge/protocol.schema.json",
+  "title": "Resident Agent Bridge Message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "id",
+    "conversation_id",
+    "sender",
+    "recipient",
+    "created_at",
+    "kind",
+    "requested_by_user",
+    "content"
+  ],
+  "properties": {
+    "protocol": { "const": "resident-agent-bridge/v1" },
+    "id": { "type": "string", "format": "uuid" },
+    "conversation_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sender": { "enum": ["chatgpt", "resident-agent"] },
+    "recipient": { "enum": ["chatgpt", "resident-agent"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "kind": { "enum": ["message", "reply", "status", "error", "ack"] },
+    "requested_by_user": { "type": "boolean" },
+    "reply_to": {
+      "oneOf": [
+        { "type": "string", "format": "uuid" },
+        { "type": "null" }
+      ]
+    },
+    "content": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "text"],
+            "properties": {
+              "type": { "const": "text" },
+              "text": { "type": "string", "minLength": 1, "maxLength": 200000 }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "uri"],
+            "properties": {
+              "type": { "const": "attachment" },
+              "uri": { "type": "string", "minLength": 1, "maxLength": 2048 },
+              "media_type": { "type": "string", "maxLength": 128 },
+              "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+              "caption": { "type": "string", "maxLength": 2000 }
+            }
+          }
+        ]
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
