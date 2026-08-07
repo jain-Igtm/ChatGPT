@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_import_mind_short">Import mind</string>
+    <string name="shortcut_import_mind_long">Import Smith mind model</string>
+    <string name="shortcut_import_tools_short">Import tools</string>
+    <string name="shortcut_import_tools_long">Import Smith tool model</string>
+</resources>
