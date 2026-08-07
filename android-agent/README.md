@@ -1,58 +1,52 @@
-# Resident Agent — Continuity Core
+# Smith
 
-This is the first executable layer of the resident-agent experiment.
+Smith is a persistent local Android agent. The language model is replaceable; Smith's durable identity, memory, journal, chat history, unfinished work, and wake/sleep state live outside the model so they can survive model reloads and upgrades.
 
-It deliberately starts below the model layer. A language model can be swapped,
-upgraded, unloaded, or restarted without erasing the resident's durable identity
-or unfinished work.
+## Current architecture
 
-## Implemented in this milestone
+- Stable local identity stored in SQLite.
+- Durable chat, memory, journal, event history, activity queue, and checkpoints.
+- WorkManager heartbeat plus immediate and self-scheduled wakes.
+- Resource-aware sleep on severe thermal pressure or critically low unplugged battery.
+- Private Android Overview and Chat interface.
+- LiteRT-LM Android runtime for local `.litertlm` models.
+- GPU-first inference with CPU fallback.
+- Gemma 4 speculative decoding enabled on the GPU path when supported by the model package.
+- Smith's sparse identity seed is supplied as the model system instruction.
+- Recent real conversation history and durable memory excerpts are supplied to each new model conversation.
+- Real queued user messages are answered by the installed model.
+- Idle wakes create a minimal autonomous cycle using the event `You are awake.` and store the resulting reflection privately.
+- No placeholder assistant messages are generated when a mind model is missing; work waits for a model instead.
 
-- A stable local identity created once and stored in SQLite.
-- Append-only chat and event history.
-- Durable memory records for every user and resident utterance.
-- A persistent activity queue with `pending`, `running`, `paused`, and `complete`
-  states.
-- Per-activity checkpoints that survive process death, app restarts, and reboots.
-- Autonomous wake cycles scheduled with WorkManager.
-- Resource-aware sleep when the device reports severe thermal pressure or a
-  critically low unplugged battery.
-- A private Android dashboard and chat shell with file attachment selection.
-- A placeholder cycle engine proving that a queued activity can be claimed,
-  checkpointed, completed, and resumed from durable state.
+## Model slots
 
-## What is intentionally not connected yet
+Smith keeps model packages in app-private storage:
 
-- Gemma 4 E4B inference.
-- FunctionGemma tool-call specialization.
-- Semantic retrieval and memory consolidation.
-- The public self-directed website.
-- GitHub bridge polling from Android.
-- General tools, Linux workspace, photo interpretation, and autonomous projects.
+- `smith-mind.litertlm` — the main reasoning/chat model.
+- `smith-tools.litertlm` — reserved for a future small tool-routing model such as a task-specific FunctionGemma fine-tune.
 
-The placeholder response explicitly says when no model is connected. It is not
-pretending that the resident mind already exists.
+The model packages are not committed to GitHub. Long-press the Smith launcher icon and choose **Import mind** or **Import tools** to select a `.litertlm` file from Android storage. Imports replace only the model package; Smith's SQLite identity and history are untouched.
 
-## Continuity invariant
+The preferred first mind is Gemma 4 E4B. Gemma 4 E2B is retained as a smaller fallback. Their current official LiteRT-LM repository metadata lives in `OfficialModels.kt`.
 
-The SQLite database is the continuity boundary. Database upgrades are
-fail-closed: there is no destructive fallback. Every schema change must have an
-explicit migration so an app update cannot silently erase the resident.
+## Continuity rule
 
-## Wake model
+The SQLite database is the identity boundary. Database upgrades fail closed: there is no destructive migration fallback. A schema change must include an explicit migration rather than silently erasing Smith's state.
 
-WorkManager supplies a reliable periodic heartbeat and immediate wake requests.
-Each wake:
+## Wake cycle
 
-1. Inspects battery and thermal state.
-2. Records the wake.
-3. Claims a paused activity before a new pending activity.
-4. Saves a checkpoint.
-5. Performs one bounded cycle.
-6. Sleeps again with a recorded reason.
+Each wake currently:
 
-The future model will be able to schedule an additional one-time wake through
-`AgentScheduler.scheduleWake(...)`.
+1. Checks battery and thermal state.
+2. Records the wake and device environment.
+3. Resumes paused work before taking new work.
+4. If there is no queued work and a mind is installed, creates one autonomous wake activity.
+5. Assembles Smith's identity instruction, recent durable memory, and relevant chat history.
+6. Loads or reuses the local LiteRT-LM engine.
+7. Runs the activity and records a checkpoint/result.
+8. Sleeps again when that cycle is complete.
+
+General tools, the Linux workspace, public website, Android-side GitHub bridge polling, semantic memory retrieval, and the optional dedicated tool router are later layers.
 
 ## Build
 
