@@ -33,6 +33,7 @@ class SmithModelRuntime private constructor(context: Context) : AutoCloseable {
     @Synchronized
     fun generate(
         snapshot: AgentSnapshot,
+        memoryExcerpts: List<String>,
         currentMessageId: String?,
         userText: String,
         history: List<ChatMessage>,
@@ -51,7 +52,12 @@ class SmithModelRuntime private constructor(context: Context) : AutoCloseable {
         }
 
         val config = ConversationConfig(
-            systemInstruction = Contents.of(SmithPromptBuilder.systemInstruction(snapshot)),
+            systemInstruction = Contents.of(
+                SmithPromptBuilder.systemInstruction(
+                    snapshot = snapshot,
+                    memoryExcerpts = memoryExcerpts,
+                ),
+            ),
             initialMessages = initial,
             samplerConfig = SamplerConfig(
                 topK = 64,
