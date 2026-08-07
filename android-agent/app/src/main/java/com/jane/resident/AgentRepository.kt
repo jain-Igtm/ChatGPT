@@ -34,7 +34,7 @@ class AgentRepository(context: Context) {
             null,
         ).use { cursor ->
             check(cursor.moveToFirst()) { "Resident state is missing" }
-            arrayOf(
+            arrayOf<Any?>(
                 cursor.getString(0),
                 cursor.getString(1),
                 cursor.getStringOrNull(2),
