@@ -17,12 +17,19 @@
         <uses-native-library android:name="libOpenCL.so" android:required="false" />
 
         <activity
+            android:name=".ModelImportActivity"
+            android:exported="true" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
     </application>
