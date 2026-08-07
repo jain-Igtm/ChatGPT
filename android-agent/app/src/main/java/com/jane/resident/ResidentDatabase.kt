@@ -93,11 +93,11 @@ class ResidentDatabase(context: Context) :
                 singleton_id, identity_id, mode, created_at, updated_at
             ) VALUES (1, ?, 'SLEEPING', ?, ?)
             """.trimIndent(),
-            arrayOf(UUID.randomUUID().toString(), now, now),
+            arrayOf<Any>(UUID.randomUUID().toString(), now, now),
         )
         db.execSQL(
             "INSERT INTO event_log(category, detail, created_at) VALUES('birth', 'Continuity store created', ?)",
-            arrayOf(now),
+            arrayOf<Any>(now),
         )
     }
 
