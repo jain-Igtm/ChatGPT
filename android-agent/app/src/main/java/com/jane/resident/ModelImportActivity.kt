@@ -20,15 +20,9 @@ class ModelImportActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        role = intent.getStringExtra(EXTRA_ROLE) ?: inferRole(intent.data)
+        role = intent.getStringExtra(EXTRA_ROLE).takeIf { it == ROLE_TOOLS } ?: ROLE_MIND
         setContentView(buildUi())
-
-        val supplied = intent.data
-        if (supplied != null) {
-            importUri(supplied)
-        } else {
-            pickModel()
-        }
+        pickModel()
     }
 
     @Deprecated("Uses the platform document picker for broad Android compatibility.")
@@ -103,11 +97,6 @@ class ModelImportActivity : Activity() {
         }.start()
     }
 
-    private fun inferRole(uri: Uri?): String {
-        val name = uri?.let(::displayName)?.lowercase().orEmpty()
-        return if ("function" in name || "tool" in name) ROLE_TOOLS else ROLE_MIND
-    }
-
     private fun displayName(uri: Uri): String? {
         if (uri.scheme == "content") {
             contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
@@ -161,7 +150,6 @@ class ModelImportActivity : Activity() {
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
-        const val ACTION_IMPORT_MODEL = "com.jane.resident.action.IMPORT_MODEL"
         const val EXTRA_ROLE = "model_role"
         const val ROLE_MIND = "mind"
         const val ROLE_TOOLS = "tools"
