@@ -8,7 +8,7 @@
         android:name=".ResidentApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_resident"
-        android:label="Resident"
+        android:label="Smith"
         android:roundIcon="@drawable/ic_resident"
         android:supportsRtl="true"
         android:theme="@style/Theme.Resident">
