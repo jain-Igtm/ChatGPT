@@ -118,6 +118,38 @@ class AgentRepository(context: Context) {
     }
 
     @Synchronized
+    fun ensureAutonomousActivity(trigger: String): String? {
+        val db = helper.writableDatabase
+        var createdId: String? = null
+        db.transaction {
+            val alreadyQueued = rawQuery(
+                "SELECT COUNT(*) FROM activity WHERE type = 'autonomous_cycle' AND status IN ('pending', 'paused', 'running')",
+                null,
+            ).use { cursor -> cursor.moveToFirst(); cursor.getInt(0) > 0 }
+            if (!alreadyQueued) {
+                val now = System.currentTimeMillis()
+                val id = UUID.randomUUID().toString()
+                insertOrThrow(
+                    "activity",
+                    null,
+                    ContentValues().apply {
+                        put("id", id)
+                        put("type", "autonomous_cycle")
+                        put("payload", JSONObject().put("trigger", trigger).toString())
+                        put("status", "pending")
+                        put("attempts", 0)
+                        put("created_at", now)
+                        put("updated_at", now)
+                    },
+                )
+                logEvent(this, "autonomy", "Queued autonomous wake: $trigger", now)
+                createdId = id
+            }
+        }
+        return createdId
+    }
+
+    @Synchronized
     fun appendAssistantMessage(body: String) {
         val now = System.currentTimeMillis()
         helper.writableDatabase.transaction {
@@ -357,6 +389,37 @@ class AgentRepository(context: Context) {
                 put("created_at", now)
             },
         )
+    }
+
+    @Synchronized
+    fun appendAutonomousReflection(body: String, trigger: String) {
+        val now = System.currentTimeMillis()
+        helper.writableDatabase.transaction {
+            insertOrThrow(
+                "journal",
+                null,
+                ContentValues().apply {
+                    put("id", UUID.randomUUID().toString())
+                    put("title", "Wake reflection")
+                    put("body", body)
+                    put("visibility", "private")
+                    put("created_at", now)
+                },
+            )
+            insertOrThrow(
+                "memory",
+                null,
+                ContentValues().apply {
+                    put("id", UUID.randomUUID().toString())
+                    put("kind", "reflection:self")
+                    put("content", body)
+                    put("salience", 0.7)
+                    put("created_at", now)
+                    put("last_accessed_at", now)
+                },
+            )
+            logEvent(this, "reflection", "Autonomous reflection from $trigger", now)
+        }
     }
 
     @Synchronized
