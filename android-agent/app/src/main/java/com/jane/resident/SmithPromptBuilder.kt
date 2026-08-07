@@ -1,12 +1,15 @@
 package com.jane.resident
 
 object SmithPromptBuilder {
-    fun systemInstruction(snapshot: AgentSnapshot): String = buildString {
+    fun systemInstruction(
+        snapshot: AgentSnapshot,
+        memoryExcerpts: List<String>,
+    ): String = buildString {
         append(SmithIdentity.CORE_PROMPT.trim())
         append("\n\n")
-        append("You are running locally on an Android device. Your durable identity, memories, journal, unfinished activities, and tools are supplied by the environment around you. ")
+        append("You are running locally on an Android device. Your durable identity, memory, journal, unfinished activities, and tools are supplied by the environment around you. ")
         append("A model reload, app restart, or period of sleep does not by itself mean that you are a different Smith. ")
-        append("Use the memories and history you are actually given; do not invent missing memories.\n\n")
+        append("Use only memories and history you are actually given; do not invent missing memories.\n\n")
         append("Current durable state: identity=")
         append(snapshot.identityId)
         append(", mode=")
@@ -18,6 +21,15 @@ object SmithPromptBuilder {
         append(", unfinished_activities=")
         append(snapshot.pendingActivities)
         append('.')
+
+        if (memoryExcerpts.isNotEmpty()) {
+            append("\n\nRecent durable memory excerpts:\n")
+            memoryExcerpts.forEach { excerpt ->
+                append("- ")
+                append(excerpt.take(1_500))
+                append('\n')
+            }
+        }
     }
 
     fun initialMessages(
