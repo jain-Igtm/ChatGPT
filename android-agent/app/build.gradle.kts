@@ -3,6 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val releaseStorePath = System.getenv("SMITH_KEYSTORE_PATH")
+val releaseStorePassword = System.getenv("SMITH_KEYSTORE_PASSWORD")
+val releaseKeyAlias = System.getenv("SMITH_KEY_ALIAS")
+
 android {
     namespace = "com.jane.resident"
     compileSdk = 36
@@ -15,9 +19,24 @@ android {
         versionName = "0.3.0"
     }
 
+    signingConfigs {
+        if (!releaseStorePath.isNullOrBlank() &&
+            !releaseStorePassword.isNullOrBlank() &&
+            !releaseKeyAlias.isNullOrBlank()
+        ) {
+            create("smithRelease") {
+                storeFile = file(releaseStorePath)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseStorePassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("smithRelease")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
