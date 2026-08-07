@@ -68,7 +68,7 @@ class SmithModelRuntime private constructor(context: Context) : AutoCloseable {
 
         activeEngine.createConversation(config).use { conversation ->
             val response = conversation.sendMessage(userText)
-            val text = response.text.trim()
+            val text = response.toString().trim()
             check(text.isNotEmpty()) { "Model returned an empty response" }
             return ModelGeneration(
                 text = text,
