@@ -4,8 +4,8 @@
         android:shortcutId="import_mind"
         android:enabled="true"
         android:icon="@drawable/ic_resident"
-        android:shortcutShortLabel="Import mind"
-        android:shortcutLongLabel="Import Smith mind model">
+        android:shortcutShortLabel="@string/shortcut_import_mind_short"
+        android:shortcutLongLabel="@string/shortcut_import_mind_long">
         <intent
             android:action="com.jane.resident.action.IMPORT_MODEL"
             android:targetPackage="com.jane.resident"
@@ -19,8 +19,8 @@
         android:shortcutId="import_tools"
         android:enabled="true"
         android:icon="@drawable/ic_resident"
-        android:shortcutShortLabel="Import tools"
-        android:shortcutLongLabel="Import Smith tool model">
+        android:shortcutShortLabel="@string/shortcut_import_tools_short"
+        android:shortcutLongLabel="@string/shortcut_import_tools_long">
         <intent
             android:action="com.jane.resident.action.IMPORT_MODEL"
             android:targetPackage="com.jane.resident"
