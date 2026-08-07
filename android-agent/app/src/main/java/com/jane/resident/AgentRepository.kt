@@ -210,6 +210,25 @@ class AgentRepository(context: Context) {
     }
 
     @Synchronized
+    fun listMemoryExcerpts(limit: Int = 16): List<String> {
+        return helper.readableDatabase.rawQuery(
+            """
+            SELECT kind, content
+            FROM memory
+            ORDER BY last_accessed_at DESC, created_at DESC
+            LIMIT ?
+            """.trimIndent(),
+            arrayOf(limit.toString()),
+        ).use { cursor ->
+            buildList {
+                while (cursor.moveToNext()) {
+                    add("[${cursor.getString(0)}] ${cursor.getString(1)}")
+                }
+            }
+        }
+    }
+
+    @Synchronized
     fun wake(reason: String) {
         val now = System.currentTimeMillis()
         helper.writableDatabase.transaction {
