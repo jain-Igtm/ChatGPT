@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="import_mind"
+        android:enabled="true"
+        android:icon="@drawable/ic_resident"
+        android:shortcutShortLabel="Import mind"
+        android:shortcutLongLabel="Import Smith mind model">
+        <intent
+            android:action="com.jane.resident.action.IMPORT_MODEL"
+            android:targetPackage="com.jane.resident"
+            android:targetClass="com.jane.resident.ModelImportActivity">
+            <extra
+                android:name="model_role"
+                android:value="mind" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="import_tools"
+        android:enabled="true"
+        android:icon="@drawable/ic_resident"
+        android:shortcutShortLabel="Import tools"
+        android:shortcutLongLabel="Import Smith tool model">
+        <intent
+            android:action="com.jane.resident.action.IMPORT_MODEL"
+            android:targetPackage="com.jane.resident"
+            android:targetClass="com.jane.resident.ModelImportActivity">
+            <extra
+                android:name="model_role"
+                android:value="tools" />
+        </intent>
+    </shortcut>
+</shortcuts>
