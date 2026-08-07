@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="resident_background">#090B10</color>
+    <color name="resident_surface">#121620</color>
+    <color name="resident_surface_high">#1A2030</color>
+    <color name="resident_text">#F1F4FA</color>
+    <color name="resident_muted">#9AA6BC</color>
+    <color name="resident_accent">#9CC8FF</color>
+</resources>
